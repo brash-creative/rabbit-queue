@@ -50,7 +50,7 @@ try {
     $consume        = new Consume($amqp);
     $consume->consume('EXAMPLE_QUEUE', $processObject, 'exampleProcessMethod');
 } catch (ConsumeException $e) {
-    // Catch publish errors
+    // Catch consume errors
 } catch (\Exception $e) {
     // Catch all other errors
 }

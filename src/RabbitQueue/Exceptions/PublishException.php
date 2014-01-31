@@ -3,4 +3,7 @@
 namespace RabbitQueue\Exceptions;
 
 
-class PublishException extends \Exception {}
+class PublishException extends \Exception
+{
+
+}

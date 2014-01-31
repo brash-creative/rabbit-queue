@@ -4,7 +4,8 @@ namespace RabbitQueue\Abstracts;
 
 use PhpAmqpLib\Connection\AMQPConnection;
 
-class QueueAbstract {
+class QueueAbstract
+{
     /**
      * @var AMQPConnection
      */
@@ -55,7 +56,7 @@ class QueueAbstract {
      */
     public function getChannel()
     {
-        if(!$this->channel) {
+        if (!$this->channel) {
             $this->setChannel($this->getConnection()->channel());
         }
         return $this->channel;

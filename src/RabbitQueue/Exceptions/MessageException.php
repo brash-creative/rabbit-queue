@@ -3,4 +3,7 @@
 namespace RabbitQueue\Exceptions;
 
 
-class MessageException extends \Exception {}
+class MessageException extends \Exception
+{
+
+}

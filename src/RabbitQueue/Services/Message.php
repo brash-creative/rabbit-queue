@@ -5,7 +5,8 @@ namespace RabbitQueue\Services;
 use RabbitQueue\Interfaces\MessageInterface;
 use RabbitQueue\Exceptions\MessageException;
 
-class Message implements MessageInterface {
+class Message implements MessageInterface
+{
     /**
      * @var string
      */
@@ -43,8 +44,9 @@ class Message implements MessageInterface {
      */
     public function setPayload($payload)
     {
-        if(!is_string($payload))
+        if (!is_string($payload)) {
             throw new MessageException("Message payload must be a string or serialized object");
+        }
 
         $this->payload  = $payload;
         return $this->payload;

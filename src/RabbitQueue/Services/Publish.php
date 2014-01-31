@@ -8,7 +8,8 @@ use RabbitQueue\Abstracts\QueueAbstract;
 use RabbitQueue\Interfaces\MessageInterface;
 use RabbitQueue\Exceptions\PublishException;
 
-class Publish extends QueueAbstract {
+class Publish extends QueueAbstract
+{
     public function __construct(AMQPConnection $connection)
     {
         parent::__construct($connection);
@@ -21,8 +22,9 @@ class Publish extends QueueAbstract {
      */
     public function publish(MessageInterface $message)
     {
-        if(!$message->getQueue())
+        if (!$message->getQueue()) {
             throw new PublishException("Message must have a queue set");
+        }
 
         try {
             $data       = new AMQPMessage((string) $message);

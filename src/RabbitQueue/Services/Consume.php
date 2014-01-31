@@ -6,7 +6,8 @@ use PhpAmqpLib\Connection\AMQPConnection;
 use RabbitQueue\Abstracts\QueueAbstract;
 use RabbitQueue\Exceptions\ConsumeException;
 
-class Consume extends QueueAbstract {
+class Consume extends QueueAbstract
+{
     public function __construct(AMQPConnection $connection)
     {
         parent::__construct($connection);
@@ -30,7 +31,7 @@ class Consume extends QueueAbstract {
 
             echo 'Polling for messages...' . PHP_EOL;
 
-            while(count($channel->callbacks)) {
+            while (count($channel->callbacks)) {
                 $channel->wait();
             }
         } catch (\Exception $e) {

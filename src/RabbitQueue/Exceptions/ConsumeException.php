@@ -3,4 +3,7 @@
 namespace RabbitQueue\Exceptions;
 
 
-class ConsumeException extends \Exception {}
+class ConsumeException extends \Exception
+{
+
+}

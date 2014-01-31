@@ -9,7 +9,7 @@ use RabbitQueue\Exceptions\ConsumeException;
 class Consume extends QueueAbstract {
     public function __construct(AMQPConnection $connection)
     {
-        parent::_construct($connection);
+        parent::__construct($connection);
     }
 
     /**

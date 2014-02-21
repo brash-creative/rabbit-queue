@@ -52,7 +52,7 @@ class QueueAbstract
     }
 
     /**
-     * @return string
+     * @return \PhpAmqpLib\Channel\AMQPChannel
      */
     public function getChannel()
     {

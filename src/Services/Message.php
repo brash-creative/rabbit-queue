@@ -24,7 +24,7 @@ class Message implements MessageInterface
     public function setQueue($queueName)
     {
         $this->queue = $queueName;
-        return $this->queue;
+        return $this;
     }
 
     /**
@@ -49,7 +49,7 @@ class Message implements MessageInterface
         }
 
         $this->payload  = $payload;
-        return $this->payload;
+        return $this;
     }
 
     /**

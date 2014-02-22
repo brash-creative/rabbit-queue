@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/paul-crashley/rabbit-queue.png?branch=develop)](https://travis-ci.org/paul-crashley/rabbit-queue)
+
 # Basic RabbitMQ interface
 
 A basic package to publish and/or consume AMQP messages via RabbitMQ

@@ -4,6 +4,7 @@ namespace Brash\RabbitQueue;
 
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 abstract class RabbitQueue
 {
@@ -70,8 +71,10 @@ abstract class RabbitQueue
      */
     public function push($payload)
     {
+        $msg    = new AMQPMessage($payload);
+
         try {
-            $this->getChannel()->basic_publish($payload, $this->exchange, $this->queue);
+            $this->getChannel()->basic_publish($msg, $this->exchange, $this->queue);
         } catch (\Exception $e) {
             throw new QueueException("Could not push to queue", $e->getCode(), $e);
         }

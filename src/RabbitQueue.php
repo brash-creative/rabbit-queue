@@ -97,7 +97,6 @@ abstract class RabbitQueue
     public function pull($object, $method)
     {
         try {
-            $this->getChannel()->queue_declare($this->queue);
             $this->getChannel()->basic_qos(0, 1, false);
             $this->getChannel()->basic_consume($this->queue, '', false, false, false, false, array($object, $method));
         } catch (\Exception $e) {

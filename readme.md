@@ -4,29 +4,41 @@
 
 A basic package to publish and/or consume AMQP messages via RabbitMQ
 
-## Usage Example - Publish
+First, you need to create your queue class, which extends the Rabbit Brash\RabbitQueue\RabbitQueue class
+with the queue parameter set with your desired queue name.
 
-Publish a JSON string or serialized object to the queue using the MessageInterface, which is then 
-sent to the publish method.
+```php
+<?php
+use Brash\RabbitQueue\RabbitQueue
+
+class MyQueue extends RabbitQueue {
+
+    protected $queue = 'EXAMPLE_QUEUE';
+
+    public function __construct(AMQPConnection $connection)
+    {
+        parent::__construct($connection)
+    }
+}
+```
+
+This class can then be used to push/pull all messages to that queue.
+
+## Usage Example - Publish
 
 ```php
 <?php
 use PhpAmqpLib\Connection\AMQPConnection;
-use RabbitQueue\Services\Message;
-use RabbitQueue\Services\Publish;
-use RabbitQueue\Exceptions\PublishException;
+use Brash\RabbitQueue\PublishException;
 
-$message    = new Message();
-$message->setQueue('EXAMPLE_QUEUE');
-$message->setPayload('{"msg":"My test payload"}');
-
-// New AMQPConnection from AMQPLib package,
-// AMQPConnection(host, port, username, password)
 try {
+    // New AMQPConnection from AMQPLib package,
+    // AMQPConnection(host, port, username, password)
+    $message    = "This is my message";
     $amqp       = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');
-    $publish    = new Publish($amqp);
-    $publish->publish($message);
-} catch (PublishException $e) {
+    $publish    = new MyQueue($amqp);
+    $publish->push($message);
+} catch (QueueException $e) {
     // Catch publish errors
 } catch (\Exception $e) {
     // Catch all other errors
@@ -34,9 +46,11 @@ try {
 ?>
 ```
 
-## Usage Example - Consume
-
 The consumer will retrieve messages from the queue and pass them to an object/method defined by the user for processing.
+
+You can pull messages down with or without acknowledgement.
+
+## Usage Example - Consume (acknowledgement)
 
 
 ```php
@@ -49,8 +63,11 @@ use RabbitQueue\Exceptions\ConsumeException;
 try {
     $amqp           = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');
     $processObject  = new ExampleProcessClass();
-    $consume        = new Consume($amqp);
-    $consume->consume('EXAMPLE_QUEUE', $processObject, 'exampleProcessMethod');
+    $consume        = new MyQueue($amqp);
+    $consume->pull($processObject, 'exampleProcessMethod');
+
+    // Keep listening to the queue...
+    $consume->poll();
 } catch (ConsumeException $e) {
     // Catch consume errors
 } catch (\Exception $e) {

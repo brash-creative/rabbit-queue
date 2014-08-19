@@ -29,10 +29,9 @@ This class can then be used to push/pull all messages to that queue.
 ```php
 <?php
 use PhpAmqpLib\Connection\AMQPConnection;
-use Brash\RabbitQueue\PublishException;
+use Brash\RabbitQueue\QueueException;
 
 try {
-    // New AMQPConnection from AMQPLib package,
     // AMQPConnection(host, port, username, password)
     $message    = "This is my message";
     $amqp       = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');

@@ -19,6 +19,11 @@ abstract class RabbitQueue
     protected $queue;
 
     /**
+     * @var \PhpAmqpLib\Channel\AMQPChannel
+     */
+    protected $channel;
+
+    /**
      * @var string
      */
     protected $exchange = "";
@@ -38,11 +43,14 @@ abstract class RabbitQueue
     }
 
     /**
-     * @return \PhpAmqpLib\Channel\AMQPChannel
+     * @return AMQPChannel
      */
     public function getChannel()
     {
-        return new AMQPChannel($this->connection);
+        if (null === $this->channel) {
+            $this->channel  = new AMQPChannel($this->connection);
+        }
+        return $this->channel;
     }
 
     /**

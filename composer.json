@@ -21,7 +21,7 @@
         }
     },
     "autoload": {
-        "psr-4": {"RabbitQueue\\": "src/"}
+        "psr-4": {"Brash\\RabbitQueue\\": "src/"}
     },
     "minimum-stability": "dev"
 }

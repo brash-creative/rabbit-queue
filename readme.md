@@ -64,7 +64,7 @@ try {
 
     // Keep listening to the queue...
     $consume->poll();
-} catch (ConsumeException $e) {
+} catch (QueueException $e) {
     // Catch consume errors
 } catch (\Exception $e) {
     // Catch all other errors

@@ -3,13 +3,13 @@
 namespace Brash\RabbitQueue;
 
 use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 abstract class RabbitQueue
 {
     /**
-     * @var \PhpAmqpLib\Connection\AMQPConnection
+     * @var \PhpAmqpLib\Connection\AMQPStreamConnection
      */
     protected $connection;
 
@@ -29,13 +29,13 @@ abstract class RabbitQueue
     protected $exchange = "";
 
     /**
-     * @param AMQPConnection    $amqpConnection
+     * @param AMQPStreamConnection    $AMQPStreamConnection
      *
      * @throws QueueException
      */
-    public function __construct(AMQPConnection $amqpConnection)
+    public function __construct(AMQPStreamConnection $AMQPStreamConnection)
     {
-        $this->connection       = $amqpConnection;
+        $this->connection       = $AMQPStreamConnection;
 
         if (true === empty($this->queue)) {
             throw new QueueException("No queue set");

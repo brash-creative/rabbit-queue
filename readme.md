@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/paul-crashley/rabbit-queue.png?branch=develop)](https://travis-ci.org/paul-crashley/rabbit-queue)
+[![Build Status](https://travis-ci.org/brash-creative/rabbit-queue.svg?branch=master)](https://travis-ci.org/brash-creative/rabbit-queue)
 
 # Basic RabbitMQ interface
 

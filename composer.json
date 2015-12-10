@@ -2,7 +2,7 @@
     "name": "brash-creative/rabbit-queue",
     "description": "A basic package to publish and/or consume AMQP messages via RabbitMQ",
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4",
         "videlalvaro/php-amqplib": "~2.1"
     },
     "require-dev": {

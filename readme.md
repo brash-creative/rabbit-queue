@@ -52,15 +52,14 @@ You can pull messages down with or without acknowledgement.
 
 ```php
 <?php
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Brash\RabbitQueue\QueueException;
 
 // A class containing a method that the consumer can send the retrieved message body
 try {
-    $amqp           = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');
-    $processObject  = new ExampleProcessClass();
+    $amqp           = new AMQPStreamConnection('http://myrabbithost', 5672, 'guest', 'guest');
     $consume        = new MyQueue($amqp);
-    $consume->pull($processObject, 'exampleProcessMethod');
+    $consume->pull(ExampleConsumer::class);
 
     // Keep listening to the queue...
     $consume->poll();
@@ -91,19 +90,38 @@ class ExampleProcessClass {
 }
 ```
 
+Alternatively, you can extend the included AcknowledgableConsumer abstract class and call the `acknowledge` method:
+
+```php
+<?php
+use PhpAmqpLib\Message\AMQPMessage;
+use Brash\RabbitQueue\AcknowledgableConsumer;
+
+class ExampleProcessClass extends AcknowledgableConsumer
+{
+    public function exampleProcessMethod(AMQPMessage $message)
+    {
+        $body = $message->body;
+
+        // Do something with the message
+
+        $this->acknowledge($message);
+    }
+}
+```
+
 ## Usage Example - Consume (no acknowledgement)
 
 ```php
 <?php
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Brash\RabbitQueue\QueueException;
 
 // A class containing a method that the consumer can send the retrieved message body
 try {
-    $amqp           = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');
-    $processObject  = new ExampleProcessClass();
+    $amqp           = new AMQPStreamConnection('http://myrabbithost', 5672, 'guest', 'guest');
     $consume        = new MyQueue($amqp);
-    $consume->pullNoAck($processObject, 'exampleProcessMethod');
+    $consume->pullNoAck(ExampleConsumer::class);
 
     // Keep listening to the queue...
     $consume->poll();

@@ -1,6 +1,6 @@
 <?php
 
-namespace RabbitQueueTest;
+namespace Brash\RabbitQueue\Tests;
 
 use Brash\RabbitQueue\RabbitQueue;
 use PhpAmqpLib\Connection\AMQPStreamConnection;

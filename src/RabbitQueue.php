@@ -89,31 +89,29 @@ abstract class RabbitQueue
     }
 
     /**
-     * @param $object
-     * @param $method
+     * @param callable $consumer
      *
-     * @throws \Brash\RabbitQueue\QueueException
+     * @throws QueueException
      */
-    public function pull($object, $method)
+    public function pull(callable $consumer)
     {
         try {
             $this->getChannel()->basic_qos(0, 1, false);
-            $this->getChannel()->basic_consume($this->queue, '', false, false, false, false, array($object, $method));
+            $this->getChannel()->basic_consume($this->queue, '', false, false, false, false, $consumer);
         } catch (\Exception $e) {
             throw new QueueException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
     /**
-     * @param $object
-     * @param $method
+     * @param callable $consumer
      *
-     * @throws \Brash\RabbitQueue\QueueException
+     * @throws QueueException
      */
-    public function pullNoAck($object, $method)
+    public function pullNoAck(callable $consumer)
     {
         try {
-            $this->getChannel()->basic_consume($this->queue, '', false, true, false, false, array($object, $method));
+            $this->getChannel()->basic_consume($this->queue, '', false, true, false, false, $consumer);
         } catch (\Exception $e) {
             throw new QueueException($e->getMessage(), $e->getCode(), $e);
         }

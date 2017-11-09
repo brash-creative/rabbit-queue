@@ -40,6 +40,8 @@ abstract class RabbitQueue
         if (true === empty($this->queue)) {
             throw new QueueException("No queue set");
         }
+
+        $this->channel->queue_declare($this->queue);
     }
 
     /**

@@ -35,7 +35,8 @@ abstract class RabbitQueue
      */
     public function __construct(AMQPStreamConnection $AMQPStreamConnection)
     {
-        $this->connection       = $AMQPStreamConnection;
+        $this->connection = $AMQPStreamConnection;
+        $this->channel = $this->connection->channel();
 
         if (true === empty($this->queue)) {
             throw new QueueException("No queue set");

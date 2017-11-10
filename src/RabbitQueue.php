@@ -14,11 +14,6 @@ abstract class RabbitQueue
     protected $connection;
 
     /**
-     * @var string
-     */
-    protected $queue;
-
-    /**
      * @var \PhpAmqpLib\Channel\AMQPChannel
      */
     protected $channel;
@@ -37,11 +32,17 @@ abstract class RabbitQueue
     {
         $this->connection = $AMQPStreamConnection;
 
-        if (true === empty($this->queue)) {
+        if (true === empty($this->getQueue())) {
             throw new QueueException("No queue set");
         }
 
-        $this->getChannel()->queue_declare($this->queue, false, true, false, false);
+        $this->getChannel()->queue_declare(
+            $this->getQueue(),
+            false,
+            true,
+            false,
+            false
+        );
     }
 
     /**
@@ -84,7 +85,7 @@ abstract class RabbitQueue
         $msg    = new AMQPMessage($payload);
 
         try {
-            $this->getChannel()->basic_publish($msg, $this->exchange, $this->queue);
+            $this->getChannel()->basic_publish($msg, $this->exchange, $this->getQueue());
         } catch (\Exception $e) {
             throw new QueueException("Could not push to queue", $e->getCode(), $e);
         }
@@ -101,7 +102,7 @@ abstract class RabbitQueue
 
         try {
             $this->getChannel()->basic_qos(0, 1, false);
-            $this->getChannel()->basic_consume($this->queue, '', false, false, false, false, $consumer);
+            $this->getChannel()->basic_consume($this->getQueue(), '', false, false, false, false, $consumer);
         } catch (\Exception $e) {
             throw new QueueException($e->getMessage(), $e->getCode(), $e);
         }
@@ -117,7 +118,7 @@ abstract class RabbitQueue
         $consumer = $this->determineCallable($consumer);
 
         try {
-            $this->getChannel()->basic_consume($this->queue, '', false, true, false, false, $consumer);
+            $this->getChannel()->basic_consume($this->getQueue(), '', false, true, false, false, $consumer);
         } catch (\Exception $e) {
             throw new QueueException($e->getMessage(), $e->getCode(), $e);
         }

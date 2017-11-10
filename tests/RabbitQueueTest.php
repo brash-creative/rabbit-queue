@@ -1,23 +1,21 @@
 <?php
-namespace RabbitQueueTest;
+namespace Brash\RabbitQueue\Tests;
 
-include 'TestQueue.php';
+use Brash\RabbitQueue\QueueException;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PHPUnit\Framework\TestCase;
 
-class RabbitQueueTest extends \PHPUnit_Framework_TestCase
+
+class RabbitQueueTest extends TestCase
 {
     public function testQueueException()
     {
-        $this->setExpectedException('Brash\RabbitQueue\QueueException');
+        $this->expectException(QueueException::class);
 
-        $amqp       = $this->getMockBuilder('PhpAmqpLib\Connection\AMQPConnection')
+        $amqp       = $this->getMockBuilder(AMQPStreamConnection::class)
            ->disableOriginalConstructor()
            ->getMock();
 
-        $channel    = $this->getMockBuilder('PhpAmqpLib\Channel\AMQPChannel')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-
-        $class = new TestQueue($amqp, $channel);
+        $class = new TestQueue($amqp);
     }
 }

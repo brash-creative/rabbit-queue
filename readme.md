@@ -19,6 +19,11 @@ class MyQueue extends RabbitQueue {
     {
         parent::__construct($connection)
     }
+    
+    public function getQueue(): string 
+    {
+        return $this->queue;
+    }
 }
 ```
 
@@ -28,13 +33,13 @@ This class can then be used to push/pull all messages to that queue.
 
 ```php
 <?php
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Brash\RabbitQueue\QueueException;
 
 try {
     // AMQPConnection(host, port, username, password)
     $message    = "This is my message";
-    $amqp       = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');
+    $amqp       = new AMQPStreamConnection('http://myrabbithost', 5672, 'guest', 'guest');
     $publish    = new MyQueue($amqp);
     $publish->push($message);
 } catch (QueueException $e) {
@@ -44,23 +49,45 @@ try {
 }
 ```
 
-The consumer will retrieve messages from the queue and pass them to an object/method defined by the user for processing.
+The consumer will retrieve messages from the queue and pass them to the chosen processor.
 
-You can pull messages down with or without acknowledgement.
+Processor methods involve passing a callable method, object/method pair or class path constant of an invokable class, e.g.
+
+```php
+$consume->pull([$class, 'method']);
+$consume->pull(function (AMQPMessage $message){
+    // Some code
+})
+$consume->pull(ExampleConsumer::class);
+```
+
+In the final example, ExampleConsumer class would look like:
+
+For example:
+```php
+class ExampleConsumer
+{
+    public function __invoke(AMPQMessage $message)
+    {
+        // Code
+    }   
+}
+```
+
+You can also choose to pull messages down with or without acknowledgement.
 
 ## Usage Example - Consume (acknowledgement)
 
 ```php
 <?php
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Brash\RabbitQueue\QueueException;
 
 // A class containing a method that the consumer can send the retrieved message body
 try {
-    $amqp           = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');
-    $processObject  = new ExampleProcessClass();
+    $amqp           = new AMQPStreamConnection('http://myrabbithost', 5672, 'guest', 'guest');
     $consume        = new MyQueue($amqp);
-    $consume->pull($processObject, 'exampleProcessMethod');
+    $consume->pull(ExampleConsumer::class);
 
     // Keep listening to the queue...
     $consume->poll();
@@ -79,8 +106,8 @@ In this example...
 <?php
 use PhpAmqpLib\Message\AMQPMessage;
 
-class ExampleProcessClass {
-    public function exampleProcessMethod(AMQPMessage $message)
+class ExampleConsumer {
+    public function __invoke(AMQPMessage $message)
     {
         $body = $message->body;
 
@@ -91,19 +118,38 @@ class ExampleProcessClass {
 }
 ```
 
+Alternatively, you can extend the included AcknowledgableConsumer abstract class and call the `acknowledge` method:
+
+```php
+<?php
+use PhpAmqpLib\Message\AMQPMessage;
+use Brash\RabbitQueue\AcknowledgableConsumer;
+
+class ExampleConsumer extends AcknowledgableConsumer
+{
+    public function __invoke(AMQPMessage $message)
+    {
+        $body = $message->body;
+
+        // Do something with the message
+
+        $this->acknowledge($message);
+    }
+}
+```
+
 ## Usage Example - Consume (no acknowledgement)
 
 ```php
 <?php
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Brash\RabbitQueue\QueueException;
 
 // A class containing a method that the consumer can send the retrieved message body
 try {
-    $amqp           = new AMQPConnection('http://myrabbithost', 5672, 'guest', 'guest');
-    $processObject  = new ExampleProcessClass();
+    $amqp           = new AMQPStreamConnection('http://myrabbithost', 5672, 'guest', 'guest');
     $consume        = new MyQueue($amqp);
-    $consume->pullNoAck($processObject, 'exampleProcessMethod');
+    $consume->pullNoAck(ExampleConsumer::class);
 
     // Keep listening to the queue...
     $consume->poll();

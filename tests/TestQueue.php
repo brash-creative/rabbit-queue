@@ -11,4 +11,9 @@ class TestQueue extends RabbitQueue
     {
         parent::__construct($connection);
     }
+
+    protected function getQueue(): string
+    {
+        return '';
+    }
 }

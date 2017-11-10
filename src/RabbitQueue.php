@@ -144,5 +144,5 @@ abstract class RabbitQueue
         return $callable;
     }
 
-    abstract protected function getQueue();
+    abstract protected function getQueue(): string;
 }

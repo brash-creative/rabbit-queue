@@ -41,7 +41,7 @@ abstract class RabbitQueue
             throw new QueueException("No queue set");
         }
 
-        $this->getChannel()->queue_declare($this->queue);
+        $this->getChannel()->queue_declare($this->queue, false, true, false, false);
     }
 
     /**
@@ -95,8 +95,10 @@ abstract class RabbitQueue
      *
      * @throws QueueException
      */
-    public function pull(callable $consumer)
+    public function pull($consumer)
     {
+        $consumer = $this->determineCallable($consumer);
+
         try {
             $this->getChannel()->basic_qos(0, 1, false);
             $this->getChannel()->basic_consume($this->queue, '', false, false, false, false, $consumer);
@@ -110,8 +112,10 @@ abstract class RabbitQueue
      *
      * @throws QueueException
      */
-    public function pullNoAck(callable $consumer)
+    public function pullNoAck($consumer)
     {
+        $consumer = $this->determineCallable($consumer);
+
         try {
             $this->getChannel()->basic_consume($this->queue, '', false, true, false, false, $consumer);
         } catch (\Exception $e) {
@@ -125,4 +129,19 @@ abstract class RabbitQueue
             $this->getChannel()->wait();
         }
     }
+
+    private function determineCallable($callable): callable
+    {
+        if (is_string($callable) && class_exists($callable)) {
+            return new $callable;
+        }
+
+        if (!is_callable($callable)) {
+            throw new QueueException("Consumer must be a callable");
+        }
+
+        return $callable;
+    }
+
+    abstract protected function getQueue();
 }
